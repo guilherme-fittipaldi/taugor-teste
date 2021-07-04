@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar>
         <Tabs aria-label="simple tabs example">
           <Tab label="Listar Atividades" onClick={() => setAddTask(false)} />
           <Tab label="Nova Atividade" onClick={() => setAddTask(true)} />
@@ -33,7 +33,15 @@ export default function Dashboard() {
       </AppBar>
       {error && <p>{error}</p>}
       <main>
-        {addTask ? <AddTask setAddTask={setAddTask} /> : <TaskList />}
+        {addTask ? (
+          <>
+            <h2>Adicionar Atividade</h2> <AddTask setAddTask={setAddTask} />{" "}
+          </>
+        ) : (
+          <>
+            <h2>Lista de Atividades</h2> <TaskList />{" "}
+          </>
+        )}
       </main>
     </>
   );
