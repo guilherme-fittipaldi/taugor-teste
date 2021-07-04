@@ -1,0 +1,125 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100%;
+  font-weight: 400;
+  overflow: hidden;
+  font-family: "Montserrat";
+}
+
+button {
+  padding: 10px;
+  cursor: pointer;
+  color: #3fb8af;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+  border-radius: 20px;
+  text-decoration: none;
+  background-color: white;
+  border: 1px solid #3fb8af;
+  font-family: "Roboto", sans-serif;
+}
+
+button:hover {
+  color: white;
+  font-weight: 700;
+  background-color: #3fb8af;
+  transition: all 0.4s ease-in-out;
+}
+
+input,
+textarea,
+select {
+  width: 500px;
+  border: none;
+  outline: none;
+  padding: 10px;
+  font-size: 1em;
+  display: block;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background-color: #f6f6f6;
+}
+
+.modal {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: flex;
+  overflow: hidden;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+strong {
+  color: red;
+  float: right;
+  cursor: pointer;
+}
+
+.filterDesc {
+  width: 400px;
+  margin-right: 10px;
+}
+.filterStatus {
+  width: 290px;
+}
+
+header {
+  display: flex;
+  color: white;
+  background-color: #3fb8af;
+  width: 100%;
+}
+
+select {
+  width: 520px;
+  cursor: pointer;
+}
+
+a:link {
+  color: lightseagreen;
+}
+
+a:visited {
+  color: lightseagreen;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: #3fb8af;
+  font-weight: 500;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td,
+th {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #dddddd;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.form-modal {
+  background-color: white;
+  padding: 10px 30px 30px 30px;
+}
+
+main {
+  width: 80%;
+  margin: 0 auto;
+}
