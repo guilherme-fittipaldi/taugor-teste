@@ -2,42 +2,56 @@ import React, { useState } from "react";
 import firebase from "../../firebase";
 import CloseIcon from "@material-ui/icons/Close";
 import { useAuth } from "../../contexts/AuthContext";
+import moment from "moment";
 
 function EditModal({ setEdit, edit, editTask }) {
   const { currentUser } = useAuth();
   const [status, setStatus] = useState("Pendente");
+  const oldStatus = editTask.status;
+  let alterations = null;
+  let reverso = null;
+  if (editTask.editHistory) {
+    alterations = editTask.editHistory.toString().split("|");
+    console.log(alterations);
+    // reverso = alterations.reverse();
+    // console.log(reverso);
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-
     firebase
       .firestore()
-      .collection("Task").doc(editTask.id)
+      .collection("Task")
+      .doc(editTask.id)
       .update({
         status,
-        user: currentUser.email,
-      })
-      setEdit(false)
+        editHistory:
+          editTask.editHistory +
+          `|De: ${oldStatus} Para: ${status} Em: ${moment()
+            .format("DD/MM/YYYY hh:mm:ss")
+            .toString()}`,
+      });
+    setEdit(false);
   }
 
   return (
     <div className="modal">
       <form onSubmit={handleSubmit} className="form-modal">
         <h2 style={{ width: "100%" }}>
-          Editar tarefa{" "}
+          Editar tarefa: {editTask.title}
           <strong onClick={() => setEdit(false)}>
-            <i class="fas fa-times"></i>
+            <CloseIcon />
           </strong>
         </h2>
-
         <hr />
-        <div>
-          <h4>{editTask.title}</h4>
-          <p>
-            Descrição: {editTask.description}
-            <br />
-            <sub> {editTask.user ? `Por: ${editTask.user}` : null}</sub>
-          </p>
-        </div>
+        <p>Descrição: {editTask.description}</p>
+
+          {alterations !== null && <h4>Histórico de alterações</h4>}
+        <p style={{ overflowY: "scroll", height: "100px" }}>
+          {alterations !== null &&
+            alterations.map((alteration) => <tr>{alteration}</tr>)}
+        </p>
+
         <div>
           <label>Status:</label>
           {""}
@@ -52,7 +66,7 @@ function EditModal({ setEdit, edit, editTask }) {
             <option value="Cancelada">Cancelada</option>
           </select>
         </div>
-        <button>Adicionar tarefa</button>
+        <button>Editar tarefa</button>
       </form>
     </div>
   );
