@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import EditTask from "./EditTask.jsx";
 import firebase from "../../firebase";
+import { useAuth } from "../../contexts/AuthContext";
 
 function TableTasks({ status, description }) {
+  const { currentUser } = useAuth();
   const [allTasks, setAllTasks] = useState([]);
   const [edit, setEdit] = useState(false);
   const [idEdit, setIdEdit] = useState(null);
@@ -46,6 +48,7 @@ function TableTasks({ status, description }) {
         {allTasks.map(
           (task) =>
             task.status === status &&
+            task.user === currentUser.email &&
             task.description.includes(description) && (
               <tr key={task.id} id={task.id}>
                 <td className="task">
@@ -64,6 +67,7 @@ function TableTasks({ status, description }) {
         {allTasks.map(
           (task) =>
             status === "Todos" &&
+            task.user === currentUser.email &&
             task.description.includes(description) && (
               <tr key={task.id} id={task.id}>
                 <td>{task?.title}</td>
