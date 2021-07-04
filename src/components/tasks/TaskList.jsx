@@ -9,7 +9,7 @@ const TaskList = () => {
       <h2>Lista de Atividades</h2>
       <div style={{ display: "flex" }}>
         <div>
-          <label>Procurar por descrição:</label>
+          <label>Procurar por descrição</label>
           <input
             className="filterDesc"
             onChange={(e) => setDescription(e.currentTarget.value)}
