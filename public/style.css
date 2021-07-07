@@ -9,8 +9,8 @@ body {
 
 button {
   padding: 10px;
-  cursor: pointer;
   color: #3fb8af;
+  cursor: pointer;
   font-weight: 600;
   margin-top: 10px;
   text-align: center;
@@ -73,8 +73,8 @@ strong {
 
 header {
   width: 100%;
-  display: flex;
   color: white;
+  display: flex;
   background-color: #3fb8af;
 }
 
