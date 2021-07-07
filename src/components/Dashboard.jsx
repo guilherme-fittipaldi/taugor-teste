@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { Link, useHistory } from "react-router-dom";
-import TaskList from "./tasks/TaskList.jsx";
+import { useHistory } from "react-router-dom";
+import Tasks from "./tasks/Tasks.jsx";
 import AddTask from "./tasks/AddTask.jsx";
 import { AppBar, Tabs, Tab } from "@material-ui/core/";
-import { TabPanel } from "@material-ui/lab/";
 
 export default function Dashboard() {
   const [error, setError] = useState("");
   const [addTask, setAddTask] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const { logout } = useAuth();
   const history = useHistory();
 
   async function handleLogout() {
@@ -25,21 +24,31 @@ export default function Dashboard() {
   return (
     <>
       <AppBar>
-        <Tabs aria-label="simple tabs example">
-          <Tab label="Listar Atividades" onClick={() => setAddTask(false)} />
-          <Tab label="Nova Atividade" onClick={() => setAddTask(true)} />
-          <Tab onClick={handleLogout} label="Logout" />
+        <Tabs value={addTask ? 1 : 0} aria-label="simple tabs example">
+          <Tab
+            value="0"
+            label="Listar Atividades"
+            onClick={() => setAddTask(false)}
+            aria-selected={!addTask}
+          />
+          <Tab
+            value="1"
+            label="Nova Atividade"
+            onClick={() => setAddTask(true)}
+            aria-selected={addTask}
+          />
+          <Tab value="2" onClick={handleLogout} label="Logout" />
         </Tabs>
       </AppBar>
       {error && <p>{error}</p>}
       <main>
         {addTask ? (
           <>
-            <h2>Adicionar Atividade</h2> <AddTask setAddTask={setAddTask} />{" "}
+            <AddTask setAddTask={setAddTask} />{" "}
           </>
         ) : (
           <>
-            <h2>Lista de Atividades</h2> <TaskList />{" "}
+            <Tasks />{" "}
           </>
         )}
       </main>

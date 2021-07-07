@@ -18,8 +18,18 @@ export default function Login() {
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
       history.push("/");
-    } catch {
-      setError("Failed to log in");
+    } catch (error) {
+      console.log(error.code);
+      switch (error.code) {
+        case "auth/wrong-password":
+          setError("Senha incorreta");
+          break;
+        case "auth/user-not-found":
+          setError("Usuário não foi encontrado");
+          break;
+        default:
+          setError(`Falha ao logar`);
+      }
     }
 
     setLoading(false);

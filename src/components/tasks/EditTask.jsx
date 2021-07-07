@@ -1,37 +1,93 @@
 import React, { useState } from "react";
 import firebase from "../../firebase";
+import "firebase/storage";
 import CloseIcon from "@material-ui/icons/Close";
-import { useAuth } from "../../contexts/AuthContext";
 import moment from "moment";
 
-function EditModal({ setEdit, edit, editTask }) {
-  const { currentUser } = useAuth();
-  const [status, setStatus] = useState("Pendente");
-  const oldStatus = editTask.status;
+function EditModal({ setEdit, editTask }) {
+  const oldTask = editTask;
+  const [file, setFile] = useState(null);
+  const [title, setTitle] = useState(editTask.title);
+  const [status, setStatus] = useState(editTask.status);
+  const [description, setDescription] = useState(editTask.description);
+  let changes = "";
   let alterations = null;
-  let reverso = null;
   if (editTask.editHistory) {
     alterations = editTask.editHistory.toString().split("|");
-    console.log(alterations);
-    // reverso = alterations.reverse();
-    // console.log(reverso);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    firebase
-      .firestore()
-      .collection("Task")
-      .doc(editTask.id)
-      .update({
-        status,
-        editHistory:
-          editTask.editHistory +
-          `|De: ${oldStatus} Para: ${status} Em: ${moment()
-            .format("DD/MM/YYYY hh:mm:ss")
-            .toString()}`,
-      });
-    setEdit(false);
+
+    if (oldTask.status !== status) {
+      changes += ` Status mudou de: "${oldTask.status}" Para: "${status}".`;
+    }
+    if (oldTask.title !== title) {
+      changes += ` Titulo mudou de: "${oldTask.title}" Para: "${title}".`;
+    }
+    if (oldTask.description !== description) {
+      changes += ` Descrição mudou de: "${oldTask.description}" Para: "${description}".`;
+    }
+    if (idFile.files.length > 0) {
+      const name = idFile.files[0].name;
+      try {
+        var newFile = file;
+        var storageRef = firebase.storage().ref(`files/` + name);
+        var uploadTask = storageRef.put(newFile);
+        uploadTask.on(
+          "state_changed",
+          function (snapshot) {
+            var progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("upload is " + progress + " done");
+          },
+          function (error) {
+            console.log(error.message);
+          },
+          function () {
+            uploadTask.snapshot.ref
+              .getDownloadURL()
+              .then(function (downloadURL) {
+                firebase
+                  .firestore()
+                  .collection("Task")
+                  .doc(editTask.id)
+                  .update({
+                    title,
+                    description,
+                    status,
+                    fileUrl: downloadURL,
+                    editHistory:
+                      editTask.editHistory +
+                      changes +
+                      ` Em: ${moment()
+                        .format("DD/MM/YYYY hh:mm:ss")
+                        .toString()}|`,
+                  });
+              });
+          }
+        );
+      } catch (err) {
+        console.log(err.message);
+      }
+
+      setEdit(false);
+    } else {
+      firebase
+        .firestore()
+        .collection("Task")
+        .doc(editTask.id)
+        .update({
+          title,
+          description,
+          status,
+          editHistory:
+            editTask.editHistory +
+            changes +
+            ` Em: ${moment().format("DD/MM/YYYY hh:mm:ss").toString()}|`,
+        });
+      setEdit(false);
+    }
   }
 
   return (
@@ -44,14 +100,38 @@ function EditModal({ setEdit, edit, editTask }) {
           </strong>
         </h2>
         <hr />
-        <p>Descrição: {editTask.description}</p>
+        {alterations !== null && (
+          <>
+            <h4>Histórico de alterações</h4>
+            <p style={{ overflowY: "scroll", height: "100px" }}>
+              {alterations !== null &&
+                alterations.map((alteration) => <tr>{alteration}</tr>)}
+            </p>
+          </>
+        )}
 
-          {alterations !== null && <h4>Histórico de alterações</h4>}
-        <p style={{ overflowY: "scroll", height: "100px" }}>
-          {alterations !== null &&
-            alterations.map((alteration) => <tr>{alteration}</tr>)}
-        </p>
-
+        <div>
+          <label>Titulo</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.currentTarget.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Descrição</label>
+          <input
+            id="decription"
+            type="textarea"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.currentTarget.value);
+            }}
+            required
+            style={{ resize: "none" }}
+          />
+        </div>
         <div>
           <label>Status:</label>
           {""}
@@ -59,13 +139,48 @@ function EditModal({ setEdit, edit, editTask }) {
             onChange={(event) =>
               setStatus(event.target.options[event.target.selectedIndex].text)
             }
+            required
           >
-            <option value="Pendente">Pendente</option>
-            <option value="Andamento">Em andamento</option>
-            <option value="Finalizada">Finalizada</option>
-            <option value="Cancelada">Cancelada</option>
+            {editTask.status === "Pendente" ? (
+              <option value="pendent" selected>
+                Pendente
+              </option>
+            ) : (
+              <option value="pendent">Pendente</option>
+            )}
+            {editTask.status === "Em andamento" ? (
+              <option value="inProgress" selected>
+                Em andamento
+              </option>
+            ) : (
+              <option value="inProgress">Em andamento</option>
+            )}
+            {editTask.status === "Finalizada" ? (
+              <option value="finalized" selected>
+                Finalizada
+              </option>
+            ) : (
+              <option value="finalized">Finalizada</option>
+            )}
+            {editTask.status === "Cancelada" ? (
+              <option value="canceled" selected>
+                Cancelada
+              </option>
+            ) : (
+              <option value="canceled">Cancelada</option>
+            )}
           </select>
         </div>
+        <div>
+          <label>Arquivo</label>
+          <input
+            id="idFile"
+            type="file"
+            onChange={(e) => setFile(e.currentTarget.files[0])}
+            style={{ resize: "none" }}
+          />
+        </div>
+
         <button>Editar tarefa</button>
       </form>
     </div>

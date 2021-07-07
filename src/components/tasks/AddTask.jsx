@@ -57,6 +57,9 @@ function AddTask({ setAddTask }) {
   }
   return (
     <>
+      <br />
+      <br />
+      <br />
       <h2>Adicionar Atividade</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -99,7 +102,6 @@ function AddTask({ setAddTask }) {
           <input
             id="file"
             type="file"
-            // value={file}
             onChange={(e) => setFile(e.currentTarget.files[0])}
             style={{ resize: "none" }}
             required
