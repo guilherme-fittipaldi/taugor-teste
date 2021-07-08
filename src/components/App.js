@@ -9,16 +9,15 @@ import PrivateRoute from "./auth/PrivateRoute";
 function App() {
   return (
     <>
-
-        <Router>
-          <AuthProvider>
-            <Switch>
-              <PrivateRoute exact path="/" component={Dashboard} />
-              <Route path="/signup" component={Signup} />
-              <Route path="/login" component={Login} />
-            </Switch>
-          </AuthProvider>
-        </Router>
+      <Router>
+        <AuthProvider>
+          <Switch>
+            <PrivateRoute exact path="/" component={Dashboard} />
+            <Route path="/signup" component={Signup} />
+            <Route path="/login" component={Login} />
+          </Switch>
+        </AuthProvider>
+      </Router>
     </>
   );
 }
