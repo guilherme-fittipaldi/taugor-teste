@@ -13,9 +13,10 @@ function AddTask({ setAddTask }) {
   function handleSubmit(e) {
     e.preventDefault();
 
+    const name = idFile.files[0].name;
     try {
       var newFile = file;
-      var storageRef = firebase.storage().ref("files/" + newFile.toString());
+      var storageRef = firebase.storage().ref("files/" + name);
       var uploadTask = storageRef.put(newFile);
       uploadTask.on(
         "state_changed",
@@ -39,6 +40,7 @@ function AddTask({ setAddTask }) {
                 user: currentUser.email,
                 fileUrl: downloadURL,
                 editHistory: "",
+                fileName: "",
               })
               .then(() => {
                 setTitle("");
@@ -100,7 +102,7 @@ function AddTask({ setAddTask }) {
         <div>
           <label>Arquivo</label>
           <input
-            id="file"
+            id="idFile"
             type="file"
             onChange={(e) => setFile(e.currentTarget.files[0])}
             style={{ resize: "none" }}
