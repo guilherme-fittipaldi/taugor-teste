@@ -7,6 +7,7 @@ import moment from "moment";
 function EditModal({ setEdit, editTask }) {
   const oldTask = editTask;
   const [file, setFile] = useState(null);
+  const [error, setError] = useState("");
   const [title, setTitle] = useState(editTask.title);
   const [status, setStatus] = useState(editTask.status);
   const [description, setDescription] = useState(editTask.description);
@@ -30,6 +31,7 @@ function EditModal({ setEdit, editTask }) {
     }
     if (idFile.files.length > 0) {
       const name = idFile.files[0].name;
+      changes += ` Arquivo mudou de: "${oldTask.fileName}" Para: "${name}".`;
       try {
         var newFile = file;
         var storageRef = firebase.storage().ref(`files/` + name);
@@ -57,6 +59,7 @@ function EditModal({ setEdit, editTask }) {
                     description,
                     status,
                     fileUrl: downloadURL,
+                    fileName: name,
                     editHistory:
                       editTask.editHistory +
                       changes +
@@ -72,21 +75,27 @@ function EditModal({ setEdit, editTask }) {
       }
 
       setEdit(false);
+      setError("");
     } else {
-      firebase
-        .firestore()
-        .collection("Task")
-        .doc(editTask.id)
-        .update({
-          title,
-          description,
-          status,
-          editHistory:
-            editTask.editHistory +
-            changes +
-            ` Em: ${moment().format("DD/MM/YYYY hh:mm:ss").toString()}|`,
-        });
-      setEdit(false);
+      if (changes !== "") {
+        firebase
+          .firestore()
+          .collection("Task")
+          .doc(editTask.id)
+          .update({
+            title,
+            description,
+            status,
+            editHistory:
+              editTask.editHistory +
+              changes +
+              ` Em: ${moment().format("DD/MM/YYYY hh:mm:ss").toString()}|`,
+          });
+        setEdit(false);
+        setError("");
+      } else {
+        setError("Nenhuma alteração encontrada!");
+      }
     }
   }
 
@@ -180,8 +189,8 @@ function EditModal({ setEdit, editTask }) {
             style={{ resize: "none" }}
           />
         </div>
-
-        <button>Editar tarefa</button>
+        {error && <h3 style={{ color: "red" }}> {error} </h3>}
+        <button>Salvar alterações</button>
       </form>
     </div>
   );
