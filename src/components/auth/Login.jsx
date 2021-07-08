@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 
 export default function Login() {
   const emailRef = useRef();
@@ -9,6 +9,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const location = useLocation();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -40,6 +41,7 @@ export default function Login() {
       <main>
         <h2>Login</h2>
         {error && <p variant="danger">{error}</p>}
+        {location.state==="sucesso" && "Conta registrada com sucesso. Faça o login para proseguir!"}
         <form onSubmit={handleSubmit}>
           <div id="email">
             <label>Email</label>

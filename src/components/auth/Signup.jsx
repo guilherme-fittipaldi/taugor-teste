@@ -7,6 +7,7 @@ export default function Signup() {
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const { signup } = useAuth();
+  const {setSign} = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -22,10 +23,14 @@ export default function Signup() {
     await signup(emailRef.current.value, passwordRef.current.value)
       .then(() => {
         console.log("Signup successful.");
-        this.setState({
-          response: "Account Created!",
+        // setSign("Sucesso")
+        // this.setState({
+        //   response: "Account Created!",
+        // });
+        history.push({
+          pathname: "/login",
+          state: "sucesso",
         });
-        history.push("/");
       })
       .catch((error) => {
         console.log(error.code);
@@ -37,10 +42,10 @@ export default function Signup() {
             setError("Email inválido");
             break;
           case "auth/weak-password":
-            setError("Senha fraca");
+            setError("Senha fraca. Senha deve conter no mínimo 6 caracteres");
             break;
           default:
-            console.log(`Falha ao registrar`);
+            console.log(error.message);
         }
       });
     setLoading(false);
