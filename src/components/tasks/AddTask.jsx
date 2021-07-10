@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import firebase from "../../firebase";
 import "firebase/storage";
 import { useAuth } from "../../contexts/AuthContext";
+import moment from "moment";
 
 function AddTask({ setAddTask }) {
   const { currentUser } = useAuth();
@@ -16,7 +17,9 @@ function AddTask({ setAddTask }) {
     const name = idFile.files[0].name;
     try {
       var newFile = file;
-      var storageRef = firebase.storage().ref("files/" + name);
+      var storageRef = firebase
+        .storage()
+        .ref("files/" + name + moment().toString());
       var uploadTask = storageRef.put(newFile);
       uploadTask.on(
         "state_changed",

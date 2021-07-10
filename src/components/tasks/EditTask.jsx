@@ -34,7 +34,7 @@ function EditModal({ setEdit, editTask }) {
       changes += ` Arquivo mudou de: "${oldTask.fileName}" Para: "${name}".`;
       try {
         var newFile = file;
-        var storageRef = firebase.storage().ref(`files/` + name);
+        var storageRef = firebase.storage().ref(`files/` + name+ editTask.id.toString());
         var uploadTask = storageRef.put(newFile);
         uploadTask.on(
           "state_changed",
